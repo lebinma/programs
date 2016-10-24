@@ -6,8 +6,8 @@
 
 struct process
 {
-	//T = time in gantt table
-	//GT = time in the processed queue
+	//T = time in gantt chart (start time)
+	//GT = time in the processed queue (completed time)
 	int id, AT, ST, CT, TAT, WT, T, GT; 
 	int rem;	//remaining service time
 };
@@ -78,7 +78,6 @@ void main()
 	
 	printf("\nEnter the time slice : ");
 	scanf("%d", &slice);
-	
 	sort(p, n);
 	queueSize = process(p, n, queue, slice);	//process & get size of queue
 	drawTable(p, n);

@@ -6,8 +6,8 @@
 
 struct process
 {
-	//T = time in gantt table
-	//GT = time in the processed queue
+	//T = time in gantt chart (start time)
+	//GT = time in the processed queue (completed time)
 	int id, AT, ST, CT, TAT, WT, T, GT; 
 	int rem;	//remaining service time
 	int priority; //lower means higher
@@ -18,6 +18,9 @@ void drawTable(struct process[], int);	//draw Process Table
 void sort(struct process[], int);		//sort based on criteria
 int process(struct process[], int, struct process[]);	//process the processes
 int hasRemaining(struct process[], int);
+struct process* getMin(struct process[], int, int); //get next process
+struct process* getSkippable(struct process [], int, int);
+
 
 
 //-------------DEBUGGING FUNCTIONS---------------------------
@@ -61,6 +64,8 @@ void debugDrawTable(struct process p[], int n)
 //-----------------------------------------------------------
 
 
+
+
 void main()
 {
 	int n, i, queueSize;	//queueSize = size of process queue
@@ -102,6 +107,89 @@ void sort(struct process p[], int n)
 	}
 }
 
+int process(struct process p[], int n, struct process queue[])
+{
+	int t, j, queueSize=0, i=0;
+	struct process *min;//pointer : very important
+	
+	t = p[0].AT;
+	
+	while (hasRemaining(p, n))
+	{	
+ 		if (t < p[i].AT) //this process isn't here yet
+ 		{
+ 			//if there are ones remaining before this
+ 			if (hasRemaining(p, i))
+ 			{
+ 				i = 0;		 //reset the counter
+ 				continue;	 //next iteration
+ 			}
+ 			else
+ 			{
+ 				t = p[i].AT; //switch to that process
+ 			}
+ 		}
+		
+		//find the minimum process at the current instance
+		
+		min = &p[0];
+		
+		for (j=0; j<n; j++)
+		{
+			if (hasRemaining(p, j))
+			{
+				if ((p[j].priority < min->priority) && p[j].AT <= t)
+				{
+					if (p[j].rem > 0)
+						min = &p[j];
+				}
+			}
+			else
+			{
+				min = &p[j];
+			}
+		}
+		
+		//fint WT at the first instance of the process
+ 		//ie when its ST = remaining time
+ 		if (min->ST == min->rem)
+ 		{
+ 			min->WT = t - min->AT;
+ 		}
+		
+		//process the minimum node
+		min->T = t;
+		t++;
+		min->rem--;
+		min->GT = t;
+		
+		//if just done processing, find it's CT & TAT
+		if (min->rem == 0)
+		{
+			min->CT = t;
+			min->TAT = min->CT - min->AT;
+		}
+			
+		//push min to queue
+		queue[queueSize] = *min;	
+		queueSize++;
+			
+ 		//if this is was the last one
+ 		//and there are remaining processes
+ 		//reset the counter ASAP
+ 		
+ 		if ((i == n-1) && hasRemaining(p, n))
+ 		{
+
+ 			i = -1;
+ 		}
+ 		
+ 		i++;
+	}
+	
+	return queueSize;
+}
+
 int hasRemaining(struct process p[], int limit)
 {
 	int i;
@@ -115,106 +203,16 @@ int hasRemaining(struct process p[], int limit)
 	return 0;
 }
 
-int process(struct process p[], int n, struct process queue[])
-{
-	int i, t, j, queueSize=0;
-	struct process *min; //pointer : very important 
-
-	t = p[0].AT;
-
-	while (hasRemaining(p, n))
-	{
-
-	}
-
-
-	/*
-		while has remaining, increments t by 1. after incrementing
-		check if there are any processes that have arrived. If yes, then find the highest priority
-		one among them. 
-	*/
-
-
- 	for (i=0; i<n; i++)
- 	{
- 		/*
- 		debugDrawTable(p, n);
- 		safeBreakLevel--;
- 		if(safeBreakLevel == 0)
- 		{
- 			printf("\nSAFE BREAK COMPLETE.");
- 			break;
- 		}
- 		*/
- 		
- 		if (t < p[i].AT) //this process isn't here yet
- 		{
- 			t = p[i].AT; //switch to that process
- 		}
- 		
- 		//find arrived process with higher priority than this
- 		min = &p[i];
- 		
- 		for (j=0; j<n; j++)
- 		{
- 			if ((p[j].AT <= p[i].AT) && (p[j].priority < p[i].priority))
- 			{
- 				min = &p[j];
- 			}
- 		}
- 		
- 		min->T = t;
- 		
- 		//execute the process till higher priority arrives
- 		while (min->rem > 0)
- 		{ 		 			
- 			//fint WT at the first instance of the process
- 			//ie when its ST = remaining time
- 			if (min->ST == min->rem)
- 			{
- 				min->WT = min->T - min->AT;
- 			}
- 		
- 			t++;
- 			min->rem--;
- 			
- 			//higher priority arrived 
- 			for (j=0; j<n; j++)
- 			{
- 				if ((p[j].AT <= t) && min->priority > p[j].priority)
- 				{
- 					//push current process to queue before switching
- 					min->GT = t;
- 					queue[queueSize] = *min;	//push to queue
- 					queueSize++;
- 					min = &p[j];
- 				}
- 			}
- 		}
- 		
- 		//push this process after processing (rem = 0)
- 		min->GT = t;
- 		queue[queueSize] = *min;	//push to queue
- 		queueSize++;
- 		p[i].CT = t;
- 		
- 		//now that CT is known, TAT can be calculated
- 		p[i].TAT = p[i].CT - p[i].AT;	
- 	}	
- 	
- 	return queueSize;
-}
-
 void drawTable(struct process p[], int n)
 {
 	int i;
 	
-	printf("\n\nAT\tPID\tST\tCT\tTAT\tWT\n");
-	printf("------------------------------------------------\n");
+	printf("\n\nAT\tPID\tPri\tST\tCT\tTAT\tWT\n");
+	printf("---------------------------------------------------\n");
 	
 	for (i=0; i<n; i++)
 	{
-		printf("%d\tP%d\t%d\t%d\t%d\t%d\n", p[i].AT, p[i].id, p[i].ST, p[i].CT, p[i].TAT, p[i].WT);
+		printf("%d\tP%d\t%d\t%d\t%d\t%d\t%d\n", p[i].AT, p[i].id,p[i].priority, p[i].ST, p[i].CT, p[i].TAT, p[i].WT);
 	}
 }
 
