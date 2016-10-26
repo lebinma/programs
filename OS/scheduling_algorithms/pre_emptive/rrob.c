@@ -118,6 +118,7 @@ int hasRemaining(struct process p[], int limit)
 
 int process(struct process p[], int n, struct process queue[], int slice)
 {
+	debugDrawTable(p,n);
 	int i, t, queueSize=0;
 
 	t = p[0].AT;

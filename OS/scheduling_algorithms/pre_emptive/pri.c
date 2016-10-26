@@ -116,6 +116,7 @@ int process(struct process p[], int n, struct process queue[])
 	
 	while (hasRemaining(p, n))
 	{	
+		debugDrawTable(p,n);
  		if (t < p[i].AT) //this process isn't here yet
  		{
  			//if there are ones remaining before this
