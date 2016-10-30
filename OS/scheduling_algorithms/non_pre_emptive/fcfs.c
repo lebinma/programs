@@ -115,13 +115,8 @@ void drawChart(struct process p[], int n)
 	
 	for (i=1; i<n; i++)
 	{
-		if (p[i].T < p[i-1].CT)	
+		if (p[i].T == p[i-1].CT)	//if equal, no duplication
 		{
-			printf("|%d|   P%d   |%d|", p[i].T, p[i].id, p[i].CT);
-		}
-		else if (p[i].T == p[i-1].CT)	//if equal, no duplication
-		{
-			
 			printf("   P%d   |%d|", p[i].id, p[i].CT);
 		}
 		else							//lag

@@ -128,7 +128,7 @@ void drawTable(struct process p[], int n)
 	
 	for (i=0; i<n; i++)
 	{
-		printf("%d\tP%d\t%d\t%d\t%d\t%d\t%d\n", p[i].AT, p[i].id, p[i].ST, p[i].CT, p[i].TAT, p[i].WT);
+		printf("%d\tP%d\t%d\t%d\t%d\t%d\n", p[i].AT, p[i].id, p[i].ST, p[i].CT, p[i].TAT, p[i].WT);
 	}
 }
 
@@ -149,11 +149,7 @@ void drawChart(struct process p[], int n)
 	
 	for (i=1; i<n; i++)
 	{
-		if (p[i].T < p[i-1].CT)	
-		{
-			printf("|%d|   P%d   |%d|", p[i].T, p[i].id, p[i].CT);
-		}
-		else if (p[i].T == p[i-1].CT)	//if equal, no duplication
+		if (p[i].T == p[i-1].CT)	//if equal, no duplication
 		{
 			
 			printf("   P%d   |%d|", p[i].id, p[i].CT);

@@ -40,9 +40,9 @@ void debugDrawQueue(struct process p[], int n)
 	printf("\n-------------------------------\n\n");
 }
 
-void test(char c, int n)
+void test(char c[], int n)
 {
-	printf("TEST %c = %d\n", c, n);
+	printf("TEST %s = %d\n", c, n);
 }
 
 void debugDrawTable(struct process p[], int n)
@@ -116,7 +116,8 @@ int process(struct process p[], int n, struct process queue[])
 	
 	while (hasRemaining(p, n))
 	{	
-		debugDrawTable(p,n);
+		//debugDrawTable(p,n);
+
  		if (t < p[i].AT) //this process isn't here yet
  		{
  			//if there are ones remaining before this
@@ -171,9 +172,18 @@ int process(struct process p[], int n, struct process queue[])
 			min->TAT = min->CT - min->AT;
 		}
 			
-		//push min to queue
-		queue[queueSize] = *min;	
-		queueSize++;
+ 		//push new process to queue
+		//if new == top element, then just merge them
+		//else, push the new process
+		if (min->id == queue[queueSize-1].id)
+		{
+			queue[queueSize-1].GT = min->GT;
+		}
+		else
+		{
+			queue[queueSize] = *min;
+			queueSize++;
+		}
 			
  		//if this is was the last one
  		//and there are remaining processes
@@ -207,7 +217,7 @@ int hasRemaining(struct process p[], int limit)
 void drawTable(struct process p[], int n)
 {
 	int i;
-	
+
 	printf("\n\nAT\tPID\tPri\tST\tCT\tTAT\tWT\n");
 	printf("---------------------------------------------------\n");
 	
@@ -215,6 +225,7 @@ void drawTable(struct process p[], int n)
 	{
 		printf("%d\tP%d\t%d\t%d\t%d\t%d\t%d\n", p[i].AT, p[i].id,p[i].priority, p[i].ST, p[i].CT, p[i].TAT, p[i].WT);
 	}
+	
 }
 
 void drawChart(struct process p[], int n)
@@ -234,11 +245,7 @@ void drawChart(struct process p[], int n)
 	
 	for (i=1; i<n; i++)
 	{
-		if (p[i].T < p[i-1].GT)	
-		{
-			printf("|%d|   P%d   |%d|", p[i].T, p[i].id, p[i].GT);
-		}
-		else if (p[i].T == p[i-1].GT)	//if equal, no duplication
+		if (p[i].T == p[i-1].GT)	//if equal, no duplication
 		{
 			
 			printf("   P%d   |%d|", p[i].id, p[i].GT);
@@ -251,4 +258,3 @@ void drawChart(struct process p[], int n)
 	
 	printf("\n\n");
 }
-

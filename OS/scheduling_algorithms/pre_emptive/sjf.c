@@ -1,4 +1,4 @@
-//ROUND ROBIN SCHEDULING (PRE-EMPTIVE)
+//SHORTEST JOB FIRST (PRE-EMPTIVE)
 /* Copyright (C) 2016, Lebin Mathew Alex. All rights reserved.*/
 
 #include<unistd.h>
@@ -15,8 +15,11 @@ struct process
 void drawChart(struct process[], int);	//draw Gantt Chart
 void drawTable(struct process[], int);	//draw Process Table
 void sort(struct process[], int);		//sort based on criteria
-int process(struct process[], int, struct process[], int);	//process the processes
+int process(struct process[], int, struct process[]);	//process the processes
 int hasRemaining(struct process[], int);
+struct process* getMin(struct process[], int, int); //get next process
+struct process* getSkippable(struct process [], int, int);
+
 
 
 //-------------DEBUGGING FUNCTIONS---------------------------
@@ -36,9 +39,9 @@ void debugDrawQueue(struct process p[], int n)
 	printf("\n-------------------------------\n\n");
 }
 
-void test(char c, int n)
+void test(char c[], int n)
 {
-	printf("TEST %c = %d\n", c, n);
+	printf("TEST %s = %d\n", c, n);
 }
 
 void debugDrawTable(struct process p[], int n)
@@ -60,9 +63,11 @@ void debugDrawTable(struct process p[], int n)
 //-----------------------------------------------------------
 
 
+
+
 void main()
 {
-	int n, i, slice, queueSize;	//queueSize = size of process queue
+	int n, i, queueSize;	//queueSize = size of process queue
 
 	printf("Enter the number of processes : ");
 	scanf("%d", &n);
@@ -76,10 +81,8 @@ void main()
 		p[i].rem = p[i].ST;
 	}
 	
-	printf("\nEnter the time slice : ");
-	scanf("%d", &slice);
 	sort(p, n);
-	queueSize = process(p, n, queue, slice);	//process & get size of queue
+	queueSize = process(p, n, queue);	//process & get size of queue
 	drawTable(p, n);
 	drawChart(queue, queueSize);
 }
@@ -103,6 +106,100 @@ void sort(struct process p[], int n)
 	}
 }
 
+int process(struct process p[], int n, struct process queue[])
+{
+	int t, j, queueSize=0, i=0;
+	struct process *min;//pointer : very important
+	
+	t = p[0].AT;
+	
+	while (hasRemaining(p, n))
+	{	
+		//debugDrawTable(p,n);
+
+ 		if (t < p[i].AT) //this process isn't here yet
+ 		{
+ 			//if there are ones remaining before this
+ 			if (hasRemaining(p, i))
+ 			{
+ 				i = 0;		 //reset the counter
+ 				continue;	 //next iteration
+ 			}
+ 			else
+ 			{
+ 				t = p[i].AT; //switch to that process
+ 			}
+ 		}
+		
+		//find the minimum process at the current instance
+		
+		min = &p[0];
+		
+		for (j=0; j<n; j++)
+		{
+			if (hasRemaining(p, j))
+			{
+				if ((p[j].rem < min->rem) && p[j].AT <= t)
+				{
+					if (p[j].rem > 0)
+						min = &p[j];
+				}
+			}
+			else
+			{
+				min = &p[j];
+			}
+		}
+		
+		//fint WT at the first instance of the process
+ 		//ie when its ST = remaining time
+ 		if (min->ST == min->rem)
+ 		{
+ 			min->WT = t - min->AT;
+ 		}
+		
+		//process the minimum node
+		min->T = t;
+		t++;
+		min->rem--;
+		min->GT = t;
+		
+		//if just done processing, find it's CT & TAT
+		if (min->rem == 0)
+		{
+			min->CT = t;
+			min->TAT = min->CT - min->AT;
+		}
+			
+ 		//push new process to queue
+		//if new == top element, then just merge them
+		//else, push the new process
+		if (min->id == queue[queueSize-1].id)
+		{
+			queue[queueSize-1].GT = min->GT;
+		}
+		else
+		{
+			queue[queueSize] = *min;
+			queueSize++;
+		}
+
+ 		//if this is was the last one
+ 		//and there are remaining processes
+ 		//reset the counter ASAP
+ 		
+ 		if ((i == n-1) && hasRemaining(p, n))
+ 		{
+
+ 			i = -1;
+ 		}
+ 		
+ 		i++;
+	}
+
+	return queueSize;
+}
+
 int hasRemaining(struct process p[], int limit)
 {
 	int i;
@@ -114,99 +211,6 @@ int hasRemaining(struct process p[], int limit)
 	}
 	
 	return 0;
-}
-
-int process(struct process p[], int n, struct process queue[], int slice)
-{
-	debugDrawTable(p,n);
-	int i, t, queueSize=0;
-
-	t = p[0].AT;
-
- 	for (i=0; i<n; i++)
- 	{
- 		/*
- 		debugDrawTable(p, n);
- 		safeBreakLevel--;
- 		if(safeBreakLevel == 0)
- 		{
- 			printf("\nSAFE BREAK COMPLETE.");
- 			break;
- 		}
- 		*/
- 		
- 		if (t < p[i].AT) //this process isn't here yet
- 		{
- 			//if there are ones remaining before this
- 			if (hasRemaining(p, i))
- 			{
- 				i = -1;		 //reset the counter
- 				continue;	 //next iteration
- 				//i = -1 cuz there's i++
- 			}
- 			else
- 			{
- 				t = p[i].AT; //switch to that process
- 			}
- 		}
- 		
- 		if (p[i].rem > 0) //has remaining
- 		{	
- 			p[i].T = t;
-			
-			//if the remaining ST is > time slice
- 			if (p[i].rem >= slice)
- 			{
- 				t += slice;
- 			}
- 			else
- 			{
- 				t += p[i].rem;
- 			}
- 			
- 			//fint WT at the first instance of the process
- 			//ie when its ST = remaining time
- 			if (p[i].ST == p[i].rem)
- 			{
- 				p[i].WT = p[i].T - p[i].AT;
- 			}
- 			
- 			p[i].rem -= slice;
- 			p[i].GT = t;
- 			
- 			if (p[i].rem <= 0)	//just finished processing
- 			{
- 				p[i].CT = t;
- 				//now that CT is known, TAT can be calculated
- 				p[i].TAT = p[i].CT - p[i].AT;
- 			}
- 			
- 			//push new process to queue
-			//if new == top element, then just merge them
-			//else, push the new process
-			if (p[i].id == queue[queueSize-1].id)
-			{
-				queue[queueSize-1].GT = p[i].GT;
-			}
-			else
-			{
-				queue[queueSize] = p[i];
-				queueSize++;
-			}
- 		}
- 		
- 		//if this is was the last one
- 		//and there are remaining processes
- 		//reset the counter ASAP
- 		
- 		if ((i == n-1) && hasRemaining(p, n))
- 		{
- 			i = -1;
- 			//i = -1 cuz there's i++
- 		}
- 	} 	
- 	
- 	return queueSize;
 }
 
 void drawTable(struct process p[], int n)
@@ -252,4 +256,3 @@ void drawChart(struct process p[], int n)
 	
 	printf("\n\n");
 }
-
