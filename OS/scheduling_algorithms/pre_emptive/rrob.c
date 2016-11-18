@@ -1,4 +1,4 @@
-//ROUND ROBIN SCHEDULING (PRE-EMPTIVE)
+c//ROUND ROBIN SCHEDULING (PRE-EMPTIVE)
 /* Copyright (C) 2016, Lebin Mathew Alex. All rights reserved.*/
 
 #include<unistd.h>
@@ -66,7 +66,7 @@ void main()
 
 	printf("Enter the number of processes : ");
 	scanf("%d", &n);
-	struct process p[n], temp, queue[n*n*n];
+	struct process p[n], queue[n*n*n];
 	
 	for (i=0; i<n; i++)
 	{
@@ -184,7 +184,7 @@ int process(struct process p[], int n, struct process queue[], int slice)
  			//push new process to queue
 			//if new == top element, then just merge them
 			//else, push the new process
-			if (p[i].id == queue[queueSize-1].id)
+			if ((min->id == queue[queueSize-1].id) && queueSize > 0)
 			{
 				queue[queueSize-1].GT = p[i].GT;
 			}
@@ -205,7 +205,7 @@ int process(struct process p[], int n, struct process queue[], int slice)
  			//i = -1 cuz there's i++
  		}
  	} 	
- 	
+ 	test('r',queueSize);
  	return queueSize;
 }
 

@@ -17,8 +17,6 @@ void drawTable(struct process[], int);	//draw Process Table
 void sort(struct process[], int);		//sort based on criteria
 int process(struct process[], int, struct process[]);	//process the processes
 int hasRemaining(struct process[], int);
-struct process* getMin(struct process[], int, int); //get next process
-struct process* getSkippable(struct process [], int, int);
 
 
 
@@ -71,7 +69,7 @@ void main()
 
 	printf("Enter the number of processes : ");
 	scanf("%d", &n);
-	struct process p[n], temp, queue[n*n*n];
+	struct process p[n], queue[n*n*n];
 	
 	for (i=0; i<n; i++)
 	{
@@ -116,6 +114,9 @@ int process(struct process p[], int n, struct process queue[])
 	while (hasRemaining(p, n))
 	{	
 		//debugDrawTable(p,n);
+		//debugDrawQueue(queue, queueSize);
+		//test("t", t);
+		//test("id", p[i].id);
 
  		if (t < p[i].AT) //this process isn't here yet
  		{
@@ -147,9 +148,16 @@ int process(struct process p[], int n, struct process queue[])
 			}
 			else
 			{
+				//test("took min", 3);
 				min = &p[j];
+				
+				//skip t if not arrived
+				if (min->AT > t)
+					t = min->AT;
 			}
 		}
+		
+		//test("min", min->id);
 		
 		//fint WT at the first instance of the process
  		//ie when its ST = remaining time
@@ -174,7 +182,7 @@ int process(struct process p[], int n, struct process queue[])
  		//push new process to queue
 		//if new == top element, then just merge them
 		//else, push the new process
-		if (min->id == queue[queueSize-1].id)
+		if ((min->id == queue[queueSize-1].id) && queueSize > 0)
 		{
 			queue[queueSize-1].GT = min->GT;
 		}
