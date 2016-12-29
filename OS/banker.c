@@ -115,7 +115,7 @@ void main()
 
 int isSafe(int available[], int allocation[][10], int need[][10], int rCount, int pCount)
 {
-    int i, j, k, next, work[10], finish[10], safe=true;
+    int i, j, k, next, work[10], finish[10];
 
     for (i=0; i<rCount; i++) 
         work[i] = available[i]; //copy of available vector
@@ -163,11 +163,8 @@ int isSafe(int available[], int allocation[][10], int need[][10], int rCount, in
     for (i=0; i<pCount; i++)
     {
         if (!finish[i])
-            safe = false;
+            return false;
     }
 
-    if (safe)
-        return true;
-    else
-        return false;
+    return true;
 }
