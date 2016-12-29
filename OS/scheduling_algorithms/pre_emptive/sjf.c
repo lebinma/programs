@@ -1,7 +1,6 @@
 //SHORTEST JOB FIRST (PRE-EMPTIVE)
 /* Copyright (C) 2016, Lebin Mathew Alex. All rights reserved.*/
 
-#include<unistd.h>
 #include<stdio.h>
 
 struct process

@@ -1,10 +1,7 @@
 //PRE-EMPTIVE SCHEDULING
 /* Copyright (C) 2016, Lebin Mathew Alex. All rights reserved.*/
 
-#include<unistd.h>
 #include<stdio.h>
-
-enum Mode {RROB, SJF, PS} mode;
 
 struct process
 {
@@ -15,6 +12,7 @@ struct process
 	int priority; //lower means higher
 };
 
+enum Mode {RROB, SJF, PS} mode;
 void drawChart(struct process[], int);	//draw Gantt Chart
 void drawTable(struct process[], int, enum Mode);	//draw Process Table
 void sort(struct process[], int);		//sort based on criteria

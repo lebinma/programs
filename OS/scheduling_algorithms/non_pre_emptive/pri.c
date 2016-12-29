@@ -1,7 +1,6 @@
 //PRIORITY SCHEDULING
 //Copyright (c) Lebin Mathew Alex. All rights reserved.
 
-#include<unistd.h>
 #include<stdio.h>
 
 struct process

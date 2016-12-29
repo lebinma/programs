@@ -1,7 +1,6 @@
 //PROCESS SCHEDULING WITH SJF
 //Copyright (c) Lebin Mathew Alex. All rights reserved.
 
-#include<unistd.h>
 #include<stdio.h>
 
 struct process
