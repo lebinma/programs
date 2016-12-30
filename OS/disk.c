@@ -10,6 +10,7 @@ int schedule(int[], int, int[], int, enum Mode);
 void swap(int *, int *);
 int mod(int);	//mod of a value
 void drawGraph(int[], int, int, enum Mode);
+int normalize(int[], int, int[]);	//create a sorted list without duplicates
 
 void main()
 {
@@ -28,7 +29,14 @@ void main()
 		{
 			scanf("%d", &list[i]);
 		}
-		
+
+		int temp[n];
+		int x = normalize(list, n, temp);
+
+		for (i=0; i<x; i++)
+			printf("%d  ", temp[i]);
+
+		return;
 		printf("\nEnter initial head position : ");
 		scanf("%d", &queue[0]);
 		
@@ -145,17 +153,24 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 				i++;
 			}
 		}
+	}
 
 	return queueSize;
 }
 
 void drawGraph(int list[], int n, int bound, enum Mode mode)
 {
-	int i, j, loc, temp[n];
+	int i, j, loc, tempSize, temp[n];
 	
+	/*
 	for (i=0; i<n; i++)	//make a temp list
 		temp[i] = list[i];
 	
+	*/
+
+	tempSize = normalize(list, n, temp);
+	
+	/*
 	for (i=0; i<n; i++)	//sort the list
 	{
 		for (j=0; j<n-1; j++)
@@ -164,6 +179,7 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 				swap(&temp[j], &temp[j+1]);
 		}
 	}
+	*/
 	
 	/*
 	if (mode == SCAN)
@@ -182,10 +198,10 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 		printf("0\t");
 	}
 	
-	for (i=0; i<n; i++)		//print rest of the tracks
+	for (i=0; i<tempSize; i++)		//print rest of the tracks
 	{
-		//if (temp[i] != temp[i-1])
-		printf("%d\t", temp[i]);
+		if (temp[i] != temp[i-1])
+			printf("%d\t", temp[i]);
 	}
 	
 	if (mode != SCAN && list[n-1] != bound)	//SCAN has bound already in it
@@ -198,7 +214,7 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 	for (i=0; i<n; i++)	//level
 	{
 		//find location
-		for (j=0; j<n; j++)
+		for (j=0; j<tempSize; j++)
 		{
 			if (list[i] == temp[j])
 			{
@@ -254,4 +270,35 @@ void swap(int *a, int *b)
 	temp = *a;
 	*a = *b;
 	*b = temp;
+}
+
+int normalize(int list[], int n, int temp[])
+{
+	int i, j, min, tempSize=0;
+
+	for (i=0; i<n; i++)
+	{
+		min = i;
+
+		for (j=i; j<n; j++)
+		{
+			if (list[j] < list[min])
+			{
+				min = j;
+			}
+		}
+
+		if (tempSize == 0)	//no elements yet
+		{
+			temp[tempSize] = list[min];
+			tempSize++;
+		}
+		else if (tempSize>0 && temp[tempSize-1] != list[min])	//no duplicates
+		{
+			temp[tempSize] = list[min];
+			tempSize++;
+		}
+	}
+
+	return tempSize;
 }
