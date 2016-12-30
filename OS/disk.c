@@ -11,6 +11,7 @@ void swap(int *, int *);
 int mod(int);	//mod of a value
 void drawGraph(int[], int, int, enum Mode);
 int normalize(int[], int, int[]);	//create a sorted list without duplicates
+int hasRemaining(int[], int);		//check if there's tracks left ( value not -1)
 
 void main()
 {
@@ -54,8 +55,13 @@ try :	printf("\nEnter Choice : ");
 		{
 			printf("%d  ", queue[i]);
 		}
-			
+
 		printf("\n\n");
+
+		for (i=0; i<queueSize-1; i++)
+			printf("Seek time from %d to %d = %d\n", queue[i], queue[i+1], mod(queue[i]-queue[i+1]));
+			
+		printf("\n");
 		drawGraph(queue, queueSize, bound, mode);
 		
 		printf("Press 1 to try again!\n");
@@ -81,23 +87,27 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 		}
 	}
 	else if (mode == SSTF)
-	{
-		i = 0;			
+	{	
 		next = queue[0];	//for the firt time, begin with start track
 
 		//find the min distance track
-		while (i < n)
+		while (hasRemaining(list, n))
 		{
-			min = 0;
-
+			//initialise min only if not -1
 			for (j=0; j<n; j++)
 			{
-				if (list[j] == -1)
+				if(list[j] != -1)
+					min = j;
+			}
+
+			for (i=0; i<n; i++)
+			{
+				if (list[i] == -1)
 					continue;
 
-				if (mod(list[j]-next) < mod(list[min]-next))
+				if (mod(list[i]-next) < mod(list[min]-next))
 				{
-					min = j;
+					min = i;
 				}
 			}
 
@@ -108,8 +118,7 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 			}
 
 			next = list[min];
-			list[min] = -1;
-			i++;
+			list[min] = -1;		//this track has been visited
 		}
 	}
 	else if (mode == SCAN)
@@ -264,4 +273,17 @@ int normalize(int list[], int n, int temp[])
 	}
 
 	return tempSize;
+}
+
+int hasRemaining(int list[], int n)
+{
+	int i;
+
+	for (i=0; i<n; i++)
+	{
+		if (list[i] != -1)
+			return 1;
+	}
+
+	return 0;
 }
