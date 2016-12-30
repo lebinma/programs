@@ -62,7 +62,7 @@ try :	printf("\nEnter Choice : ");
 		for (i=0; i<queueSize-1; i++)
 		{
 			totalSeek += mod(queue[i]-queue[i+1]);
-			printf("Seek time from %d to %d = %d\n", queue[i], queue[i+1], mod(queue[i]-queue[i+1]));
+			printf("Seek time from track %d to %d  =  %d\n", queue[i], queue[i+1], mod(queue[i]-queue[i+1]));
 		}
 		
 		avgSeek = (float) totalSeek/(queueSize-1);
@@ -211,7 +211,7 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 				}
 				else
 				{
-					if (mode == SCAN)
+					if (mode == SCAN || temp[0] == 0) //0 is already there
 						loc = j;
 					else
 						loc = j+1;		//+1 for left end
