@@ -30,13 +30,6 @@ void main()
 			scanf("%d", &list[i]);
 		}
 
-		int temp[n];
-		int x = normalize(list, n, temp);
-
-		for (i=0; i<x; i++)
-			printf("%d  ", temp[i]);
-
-		return;
 		printf("\nEnter initial head position : ");
 		scanf("%d", &queue[0]);
 		
@@ -200,8 +193,8 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 	
 	for (i=0; i<tempSize; i++)		//print rest of the tracks
 	{
-		if (temp[i] != temp[i-1])
-			printf("%d\t", temp[i]);
+		//if (temp[i] != temp[i-1])
+		printf("%d\t", temp[i]);
 	}
 	
 	if (mode != SCAN && list[n-1] != bound)	//SCAN has bound already in it
@@ -274,28 +267,32 @@ void swap(int *a, int *b)
 
 int normalize(int list[], int n, int temp[])
 {
-	int i, j, min, tempSize=0;
+	int i, j, min, sortedList[n], tempSize=0;
+
+	//copy list for sorting
+	for (i=0; i<n; i++)
+		sortedList[i] = list[i];
+
+	//first, sort the list
+	for (i=0; i<n; i++)
+	{
+		for (j=0; j<n-1; j++)
+		{
+			if (sortedList[j] > sortedList[j+1])
+				swap(&sortedList[j], &sortedList[j+1]);
+		}
+	}
 
 	for (i=0; i<n; i++)
 	{
-		min = i;
-
-		for (j=i; j<n; j++)
-		{
-			if (list[j] < list[min])
-			{
-				min = j;
-			}
-		}
-
 		if (tempSize == 0)	//no elements yet
 		{
-			temp[tempSize] = list[min];
+			temp[tempSize] = sortedList[i];
 			tempSize++;
 		}
-		else if (tempSize>0 && temp[tempSize-1] != list[min])	//no duplicates
+		else if (tempSize>0 && temp[tempSize-1] != sortedList[i])	//no duplicates
 		{
-			temp[tempSize] = list[min];
+			temp[tempSize] = sortedList[i];
 			tempSize++;
 		}
 	}
