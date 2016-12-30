@@ -14,14 +14,12 @@ int normalize(int[], int, int[]);	//create a sorted list without duplicates
 
 void main()
 {
-	int i, n, queueSize, index, rp, bound, queue[100];
+	int i, n, queueSize, index, rp, bound, queue[100], list[100];
 	
 	do
 	{
 		printf("\nEnter the number of tracks : ");
 		scanf("%d", &n);
-		
-		int list[n]; 
 		
 		printf("\nEnter the tracks : \n");
 		
@@ -68,7 +66,7 @@ try :	printf("\nEnter Choice : ");
 
 int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 {
-	int i, j, min, queueSize=1; //1 since there's starting track
+	int i, j, min, next, queueSize=1; //1 since there's starting track
 	
 	if (mode == FCFS)
 	{
@@ -84,14 +82,20 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 	}
 	else if (mode == SSTF)
 	{
+		i = 0;			
+		next = queue[0];	//for the firt time, begin with start track
+
 		//find the min distance track
-		for (i=0; i<n-1; i++)
+		while (i < n)
 		{
-			min = i+1;
-			
-			for (j=i+1; j<n; j++)
+			min = 0;
+
+			for (j=0; j<n; j++)
 			{
-				if (mod(list[j]-list[i]) < mod(list[min]-list[i]))
+				if (list[j] == -1)
+					continue;
+
+				if (mod(list[j]-next) < mod(list[min]-next))
 				{
 					min = j;
 				}
@@ -102,6 +106,10 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 				queue[queueSize] = list[min];
 				queueSize++;
 			}
+
+			next = list[min];
+			list[min] = -1;
+			i++;
 		}
 	}
 	else if (mode == SCAN)
