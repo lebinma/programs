@@ -181,7 +181,7 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 	tempSize = normalize(list, n, temp);
 	printf("\n\n");
 
-	if (mode != SCAN && list[0] != 0)	//SCAN has 0 already in it
+	if (mode != SCAN && temp[0] != 0)	//SCAN has 0 already in it
 	{
 		printf("0\t");
 	}
@@ -191,7 +191,7 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 		printf("%d\t", temp[i]);
 	}
 	
-	if (mode != SCAN && list[n-1] != bound)	//SCAN has bound already in it
+	if (mode != SCAN && temp[tempSize-1] != bound)	//SCAN has bound already in it
 	{
 		printf("%d", bound);
 	}
