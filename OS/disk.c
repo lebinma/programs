@@ -15,7 +15,8 @@ int hasRemaining(int[], int);		//check if there's tracks left ( value not -1)
 
 void main()
 {
-	int i, n, queueSize, index, rp, bound, queue[100], list[100];
+	int i, n, queueSize, index, rp, bound, queue[100], list[100], totalSeek=0;
+	float avgSeek;
 	
 	do
 	{
@@ -59,12 +60,17 @@ try :	printf("\nEnter Choice : ");
 		printf("\n\n");
 
 		for (i=0; i<queueSize-1; i++)
+		{
+			totalSeek += mod(queue[i]-queue[i+1]);
 			printf("Seek time from %d to %d = %d\n", queue[i], queue[i+1], mod(queue[i]-queue[i+1]));
-			
-		printf("\n");
+		}
+		
+		avgSeek = (float) totalSeek/(queueSize-1);
+		printf("\nAverage Seek Time = %f\n", avgSeek);
+
 		drawGraph(queue, queueSize, bound, mode);
 		
-		printf("Press 1 to try again!\n");
+		printf("\nPress 1 to try again!\n");
 		scanf("%d", &rp);
 
 	} while (rp == 1);	
