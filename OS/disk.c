@@ -162,36 +162,8 @@ int schedule(int list[], int n, int queue[], int bound, enum Mode mode)
 void drawGraph(int list[], int n, int bound, enum Mode mode)
 {
 	int i, j, loc, tempSize, temp[n];
-	
-	/*
-	for (i=0; i<n; i++)	//make a temp list
-		temp[i] = list[i];
-	
-	*/
 
 	tempSize = normalize(list, n, temp);
-	
-	/*
-	for (i=0; i<n; i++)	//sort the list
-	{
-		for (j=0; j<n-1; j++)
-		{
-			if (temp[j] > temp[j+1])
-				swap(&temp[j], &temp[j+1]);
-		}
-	}
-	*/
-	
-	/*
-	if (mode == SCAN)
-	{
-		printf("\n\n0\t");
-	}
-	else
-	{
-		printf("\n\n0\t%d\t", temp[0]);
-	}
-	*/
 	printf("\n\n");
 
 	if (mode != SCAN && list[0] != 0)	//SCAN has 0 already in it
@@ -201,7 +173,6 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 	
 	for (i=0; i<tempSize; i++)		//print rest of the tracks
 	{
-		//if (temp[i] != temp[i-1])
 		printf("%d\t", temp[i]);
 	}
 	
@@ -229,19 +200,6 @@ void drawGraph(int list[], int n, int bound, enum Mode mode)
 						loc = j;
 					else
 						loc = j+1;		//+1 for left end
-					/*
-					if (mode == SCAN)
-					{
-						loc = j;
-					}
-					else
-					{
-						if (temp[0] == 0)
-							loc = j+1;		//+1 for left end
-						else	
-							loc = j;		//
-					}
-					*/
 				}
 			}
 		}
