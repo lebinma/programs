@@ -6,7 +6,6 @@
 struct process
 {
 	int id, AT, ST, CT, TAT, WT, T; //T = time in gantt table
-	int status; //0 not processed, 1 waiting, 2 processed
 	int priority; //lower means higher
 };
 
@@ -32,7 +31,6 @@ void main()
 			p[i].id = i+1;
 			printf("\nEnter AT & ST of P%d : ", i+1);
 			scanf("%d%d", &p[i].AT, &p[i].ST);
-			p[i].status = 0;
 		}
 
 		printf("\n1 FCFS\n2 SJF\n3 Priority Scheduling\n");
@@ -121,7 +119,7 @@ void process(struct process p[], int n, enum Mode mode)
 
 			for (j=i; j<n; j++)
 			{
-				if ((p[j].AT <= t) && (p[j].status >= 0)) //status = 0 or 1
+				if (p[j].AT <= t)
 				{
 					min = &p[j];
 					break;
@@ -132,10 +130,8 @@ void process(struct process p[], int n, enum Mode mode)
 
 			for (j=i; j<n; j++)
 			{
-				if ((p[j].AT <= t) && (p[j].status >= 0))
+				if (p[j].AT <= t)
 				{
-					p[j].status = 1;		//waiting
-
 					if (mode == SJF && p[j].ST < min->ST)	//find min ST node
 					{
 						min = &p[j];
@@ -147,7 +143,6 @@ void process(struct process p[], int n, enum Mode mode)
 				}
 			}
 
-			min->status = 2;
 			min->T = t;
 			min->CT = t + min->ST;
 			t = min->CT;
@@ -160,14 +155,8 @@ void process(struct process p[], int n, enum Mode mode)
 	for (i=0; i<n; i++)	//find TAT and WT
 	{
 		p[i].TAT = p[i].CT-p[i].AT;
-
-		if (p[i-1].CT > p[i].AT)
-			p[i].WT = p[i-1].CT-p[i].AT;
-		else
-			p[i].WT = 0;
+		p[i].WT=p[i].T-p[i].AT;
 	}
-
-	p[0].WT=0;
 }
 
 void drawTable(struct process p[], int n, enum Mode mode)
