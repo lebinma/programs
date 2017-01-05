@@ -1,0 +1,9 @@
+# Compiled source #
+###################
+a.out
+
+# Other files #
+###################
+*.jpg
+*.png
+*.gif
