@@ -8,7 +8,7 @@ struct page
 	int id, lastSeen, freq;
 };
 
-enum Mode {FCFS, LRU, LFU};
+enum Mode {FIFO, LRU, LFU};
 void schedule(struct page[], struct page[], int, int, enum Mode);
 int isHit(struct page, struct page[], int);	//returns location if hit
 int getFreeFrame(struct page[], int);		//returns location of a free frame
@@ -37,13 +37,13 @@ void main()
 		for (i=0; i<fCount; i++)
 			f[i].id = -1;
 
-		printf("\n1 FCFS\n2 LRU\n3 LFU\n");
+		printf("\n1 FIFO\n2 LRU\n3 LFU\n");
 try :	printf("\nEnter Choice : ");
 		scanf("%d", &index);
 
 		switch (index)
 		{
-			case 1 : schedule(p, f, pCount, fCount, FCFS) ; break;
+			case 1 : schedule(p, f, pCount, fCount, FIFO) ; break;
 			case 2 : schedule(p, f, pCount, fCount, LRU); break;
 			case 3 : schedule(p, f, pCount, fCount, LFU); break;
 			default : printf("Invalid Choice!\n"); goto try;
@@ -76,7 +76,7 @@ void schedule(struct page p[], struct page f[], int pCount, int fCount, enum Mod
 		{
 			fault = 1;
 
-			if (mode == FCFS)
+			if (mode == FIFO)
 			{
 				f[j] = p[i];		//replace page
 				j = (j+1) % fCount;		
