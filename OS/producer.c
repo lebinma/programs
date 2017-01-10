@@ -87,7 +87,7 @@ void addItem(int item)
     }
     else
     {
-        printf("Underflow : Buffer is empty.\n");
+        printf("Overflow : Buffer is full.\n");
     }
 }
 
@@ -99,6 +99,6 @@ int removeItem()
     }
     else
     {
-        printf("Overflow : Buffer is full.\n");
+        printf("Underflow : Buffer is empty.\n");
     }
 }
