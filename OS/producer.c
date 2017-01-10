@@ -19,6 +19,7 @@ void main()
 
     printf("Enter the size of buffer : ");
     scanf("%d", &bufferSize);
+    printf("\n");
 
     //initialize semaphores
     sem_init(&mutex, 0, 1);
